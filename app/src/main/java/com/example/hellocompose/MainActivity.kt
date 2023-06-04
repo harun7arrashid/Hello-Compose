@@ -9,6 +9,8 @@ import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ExpandLess
@@ -21,6 +23,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
@@ -64,6 +67,12 @@ fun HelloJetpackComposeApp() {
 }
 
 @Preview(showBackground = true, device = Devices.PIXEL_4, showSystemUi = true)
+@Preview(
+    showBackground = true,
+    device = Devices.PIXEL_4,
+    showSystemUi = true,
+    uiMode = UI_MODE_NIGHT_YES
+)
 @Composable
 fun HelloJetpackComposeAppPreview() {
     HelloComposeTheme {
@@ -75,8 +84,8 @@ fun HelloJetpackComposeAppPreview() {
 @Composable // ini macem function biasa
 fun GreetingList(names: List<String>) {
 
-    if (names.isNotEmpty()) Column { for (name in names) { Greeting(name) } }
-    else Text("No peope to great :(")
+    if (names.isNotEmpty()) LazyColumn { items(names) { name -> Greeting(name) } }
+    else Text("No people to great :(")
 
 }
 
@@ -92,34 +101,47 @@ fun Greeting(name: String) {
         )
     )
 
-    Row(
-        modifier = Modifier.padding(8.dp),
-        verticalAlignment = Alignment.CenterVertically
+    Card(
+        backgroundColor = MaterialTheme.colors.primary,
+        shape = MaterialTheme.shapes.small,
+        modifier = Modifier.padding(vertical = 4.dp, horizontal = 8.dp)
     ) {
 
-        Image(
-            painter = painterResource(id = R.drawable.jetpack_compose),
-            contentDescription = "Logo Jetpack Compose",
-            modifier = Modifier.size(animatedSizeDp)
-        )
-        
-        Spacer(modifier = Modifier.width(8.dp))
-        
-        Column(Modifier.weight(1f)) {
-            Text(
-                text = "Hello $name!",
-                fontSize = 24.sp,
-                fontWeight = FontWeight.Bold
+        Row(
+            modifier = Modifier.padding(8.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+
+            Image(
+                painter = painterResource(id = R.drawable.jetpack_compose),
+                contentDescription = "Logo Jetpack Compose",
+                modifier = Modifier.size(animatedSizeDp)
             )
-            Text(text = "Welcome Dicoding")
+
+            Spacer(modifier = Modifier.width(8.dp))
+
+            Column(Modifier.weight(1f)) {
+                Text(
+                    text = "Hello $name!",
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.Bold,
+                )
+                Text(
+                    text = "Welcome Dicoding",
+                    style = MaterialTheme.typography.body1.copy(
+                        fontStyle = FontStyle.Italic
+                    )
+                )
+            }
+
+            IconButton(onClick = { isExpanded = !isExpanded }) { // for trigger animation
+                Icon(
+                    imageVector = if (isExpanded) Icons.Filled.ExpandLess else Icons.Outlined.ExpandMore,
+                    contentDescription = if (isExpanded) "Show less" else "Show More"
+                )
+            }
         }
-        
-        IconButton(onClick = { isExpanded = !isExpanded }) { // for trigger animation
-            Icon(
-                imageVector = if (isExpanded) Icons.Filled.ExpandLess else Icons.Outlined.ExpandMore,
-                contentDescription = if (isExpanded) "Show less" else "Show More"
-            )
-        }
+
     }
 }
 
